@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue 3 Basics</title>
+  </head>
+  <body>
+    <div id="app">
+      {{ greetings }}
+      <input @keyup.enter="showGreet(greetings + '!!!!')" v-model="greetings" />
+      <hr />
+      <div v-if="isVisible">
+        <p>Lala</p>
+      </div>
+      <button v-on:click="toggleBox">Click it</button>
+      <button @click="toggleBox">Click it 2</button>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+      let app = Vue.createApp({
+        data: function () {
+          return {
+            greetings: "Hello Vue 3",
+            isVisible: false,
+          };
+        },
+        methods: {
+          toggleBox() {
+            this.isVisible = !this.isVisible;
+          },
+          showGreet(greet) {
+            console.log(this.greetings);
+            console.log(greet, "greet");
+          },
+        },
+      });
+
+      app.mount("#app");
+    </script>
+    <p>Hello Word</p>
+  </body>
+</html>

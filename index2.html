@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue 3 Basics</title>
+  </head>
+  <body>
+    <div id="app">
+      {{ greetings }}
+      <input @keyup.enter="showGreet(greetings + '!!!!')" v-model="greetings" />
+      <hr />
+      <component />
+      <div v-if="isVisible">
+        <p>Lala</p>
+      </div>
+      <button v-on:click="toggleBox">Click it</button>
+      <button @click="toggleBox">Click it 2</button>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+      let app = Vue.createApp({
+        data() {
+          return {
+            greetings: "Hello Vue 3",
+            isVisible: false,
+          };
+        },
+        methods: {
+          toggleBox() {
+            this.isVisible = !this.isVisible;
+          },
+          showGreet(greet) {
+            console.log(this.greetings);
+            console.log(greet, "greet");
+          },
+        },
+      });
+
+      app.component("component", {
+        template: `
+        <div>
+          <p v-show="isHide">{{title}}</p>
+          <p >{{label}}</p>
+          <child-component v-bind:label="label" :label2="label2" @updateParent="updateLabel" />
+        </div>
+        `,
+        data() {
+          return {
+            title: "Test component",
+            isHide: false,
+            label: "Label Parent",
+            label2: "Label Parent 2",
+          };
+        },
+        methods: {
+          clickComponent() {
+            this.isHide = !this.isHide;
+          },
+          updateLabel(value) {
+            this.label = value;
+          },
+        },
+      });
+
+      app.component("child-component", {
+        template: `
+        <div>
+          <p>{{label2}}</p>
+          <button @click="clickComponent">Click Child Component</button>
+        </div>
+        `,
+        data() {
+          return {
+            title: "Child component",
+          };
+        },
+        props: ["label", "label2"],
+        methods: {
+          clickComponent() {
+            console.log(this.label, "test");
+            this.$emit("updateParent", "Change immutable label");
+          },
+        },
+      });
+
+      app.mount("#app");
+    </script>
+    <p>Hello Word</p>
+  </body>
+</html>
