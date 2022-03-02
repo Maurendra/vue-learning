@@ -8,9 +8,11 @@
       {{ greetings }}
       <input @keyup.enter="showGreet(greetings + '!!!!')" v-model="greetings" />
       <hr />
-      <component />
+      <p v-for="(str, i) in arrayVar" :key="i">{{str}}</p>
+      <hr />
       <div v-if="isVisible">
         <p>Lala</p>
+        <component />
       </div>
       <button v-on:click="toggleBox">Click it</button>
       <button @click="toggleBox">Click it 2</button>
@@ -22,7 +24,11 @@
           return {
             greetings: "Hello Vue 3",
             isVisible: false,
+            arrayVar: ["array1", "array2", "array3"],
           };
+        },
+        updated() {
+          console.log("updated");
         },
         methods: {
           toggleBox() {
@@ -51,6 +57,15 @@
             label2: "Label Parent 2",
           };
         },
+        created() {
+          console.log("created");
+        },
+        mounted() {
+          console.log("mounted");
+        },
+        unmounted() {
+          console.log("unmounted");
+        },
         methods: {
           clickComponent() {
             this.isHide = !this.isHide;
@@ -65,12 +80,15 @@
         template: `
         <div>
           <p>{{label2}}</p>
+          <hr/>
+          <p>{{ computedValue }}</p>
           <button @click="clickComponent">Click Child Component</button>
         </div>
         `,
         data() {
           return {
             title: "Child component",
+            title2: " With computed",
           };
         },
         props: ["label", "label2"],
@@ -78,6 +96,11 @@
           clickComponent() {
             console.log(this.label, "test");
             this.$emit("updateParent", "Change immutable label");
+          },
+        },
+        computed: {
+          computedValue() {
+            return `${this.title} ${this.title2}`;
           },
         },
       });
