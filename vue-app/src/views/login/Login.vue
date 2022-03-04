@@ -67,9 +67,13 @@ export default {
         users.map((user, index) => {
           if (user.username == this.username && user.password == this.password) {
             let auth = { id: user._id, role: user.type, name: user.name };
+            console.log(auth);
             this.$store.commit('setUser', auth);
-            console.log("success");
-            console.log(this.$store.state.user, "user");
+            if (auth.role == "vendor") {
+              this.$router.push({name:"vendor-dashboard"})
+            } else {
+              this.$router.push({name:"company-dashboard"})
+            }
           }
         });
       }

@@ -42,16 +42,23 @@ router.beforeEach((to, from, next) => {
         path: "/",
       });
     } else {
-      next();
+      if (store.state.user.role == "vendor" && to.name == "company-dashboard") {
+        next({
+          path: "/vendor-dashboard",
+        });
+      } else if (
+        store.state.user.role == "company" &&
+        to.name == "vendor-dashboard"
+      ) {
+        next({
+          path: "/company-dashboard",
+        });
+      } else {
+        next();
+      }
     }
   } else {
-    if (store.state.user) {
-      next({
-        path: "/company-dashboard",
-      });
-    } else {
-      next();
-    }
+    next();
   }
 });
 
