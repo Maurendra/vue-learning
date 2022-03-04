@@ -2,7 +2,7 @@
   <div>
     <div className="w-screen h-screen flex flex-col items-center justify-center">
       <div className="w-2/6 mb-4">
-        <p className="text-2xl font-bold">Vue App</p>
+        <p className="text-2xl font-bold">Company Dashboard</p>
         <p className="mb-4 text-xs">Event Organizer</p>
         <div className="bg-blue-900 p-8 rounded-lg border-2 ">
           <h1 className="font-bold text-4xl text-white mb-4">Sign In</h1>
