@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import Login from "../views/login/Login.vue";
 import CompanyDashboard from "../views/company-dashboard/CompanyDashboard.vue";
 import VendorDashboard from "../views/vendor-dashboard/VendorDashboard.vue";
@@ -22,6 +21,7 @@ const router = createRouter({
       component: CompanyDashboard,
       meta: {
         requireAuth: true,
+        type: "company",
       },
     },
     {
@@ -30,6 +30,7 @@ const router = createRouter({
       component: VendorDashboard,
       meta: {
         requireAuth: true,
+        type: "vendor",
       },
     },
   ],
@@ -42,13 +43,13 @@ router.beforeEach((to, from, next) => {
         path: "/",
       });
     } else {
-      if (store.state.user.role == "vendor" && to.name == "company-dashboard") {
+      if (store.state.user.role == "vendor" && to.meta.type == "company") {
         next({
           path: "/vendor-dashboard",
         });
       } else if (
         store.state.user.role == "company" &&
-        to.name == "vendor-dashboard"
+        to.meta.type == "vendor"
       ) {
         next({
           path: "/company-dashboard",

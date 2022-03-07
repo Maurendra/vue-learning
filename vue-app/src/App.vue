@@ -1,11 +1,15 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "@/components/HelloWorld.vue";
+import {
+  RouterLink,
+  RouterView
+} from "vue-router";
 import http_request from "@/utils/http_request";
+import Header from "./components/Header.vue";
 </script>
 
 <template>
-  <RouterView />
+<Header/>
+<RouterView />
 </template>
 
 <style>

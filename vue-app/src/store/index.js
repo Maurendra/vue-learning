@@ -9,6 +9,11 @@ const store = createStore({
       state.user = user;
     },
   },
+  actions: {
+    logout: ({ commit }) => {
+      commit("setUser", null);
+    },
+  },
 });
 
 export default store;

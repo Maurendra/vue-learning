@@ -1,40 +1,90 @@
 <template>
-  <div>
-    <div className="w-screen h-screen flex flex-col items-center justify-center">
-      <div className="w-2/6 mb-4">
-        <p className="text-2xl font-bold">Vendor Dashboard</p>
-        <p className="mb-4 text-xs">Event Organizer</p>
-        <div className="bg-blue-900 p-8 rounded-lg border-2 ">
-          <h1 className="font-bold text-4xl text-white mb-4">Sign In</h1>
-          <div className="mb-4">
-            <div className="mb-4">
-              <div className="w-full bg-neutral-50 py-4 px-8 border-2 border-neutral-300 items-center rounded-lg flex space-x-4">
-                <input
-                  type="text"
-                  className="text-neutral-500 placeholder-gray-300 text-base leading-6 flex-1 bg-neutral-50 border-none focus:outline-none"
-                  placeholder="Username"
-                />
-              </div>
+<div>
+  <div className="max-w-6xl mx-auto py-8">
+    <table className="shadow-lg bg-white w-full">
+      <thead>
+        <tr>
+          <th className="bg-blue-100 border text-left px-8 py-4">
+            Event Name
+          </th>
+          <th className="bg-blue-100 border text-left px-8 py-4">
+            Vendor Name
+          </th>
+          <th className="bg-blue-100 border text-left px-8 py-4">
+            Confirmed Date
+          </th>
+          <th className="bg-blue-100 border text-left px-8 py-4">Status</th>
+          <th className="bg-blue-100 border text-left px-8 py-4">
+            Date Created
+          </th>
+          <th className="bg-blue-100 border text-left px-8 py-4">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(event, idx) in events" :key="idx">
+          <td className="border px-8 py-4">{{event.event_name}}</td>
+          <td className="border px-8 py-4">{{event.vendor_name}}</td>
+          <td className="border px-8 py-4">
+            {{event.confirm_date
+            ? `${this.formatDate(event.confirm_date)}`
+            : `${this.formatDate(event.proposed_date_1)} (Proposed Date)`}}
+          </td>
+          <td className="border px-8 py-4">{{event.status}}</td>
+          <td className="border px-8 py-4">
+            {{this.formatDate(event.created_at)}}
+          </td>
+          <td className="border px-8 py-4 flex space-x-2">
+            <div className="bg-blue-400 hover:bg-blue-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
+              <p className="font-bold">View</p>
             </div>
-            <div>
-              <div className="w-full bg-neutral-50 py-4 px-8 border-2 border-neutral-300 items-center rounded-lg flex space-x-4">
-                <input
-                  type="password"
-                  className="text-neutral-500 placeholder-gray-300 text-base leading-6 flex-1 bg-neutral-50 border-none focus:outline-none"
-                  placeholder="Password"
-                />
-              </div>
+            <div className="bg-red-400 hover:bg-red-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
+              <p className="font-bold">Delete</p>
             </div>
-          </div>
-          <div
-            className="flex items-center w-full justify-center"
-          >
-            <div className="bg-white hover:bg-blue-400 hover:text-white border-2 border-neutral-600 rounded-lg py-4 px-12 cursor-pointer w-fit">
-              <p className="font-bold">Sign In</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>
 </template>
+
+<script>
+import EventRepository from "../../repositories/event_repository";
+export default {
+  name: "VendorDashboard",
+  data() {
+    return {
+      events: [],
+      auth: this.$store.state.user
+    }
+  },
+  methods: {
+    async getEvents() {
+      const res = await EventRepository.fetchEvents();
+      console.log(res);
+      if (res.data) {
+        let ev = res.data;
+        let data = [];
+        ev.map((event, index) => {
+          if (event.vendor_id == this.auth.id) {
+            data.push(event);
+          }
+        });
+        console.log(data, "data");
+        if (data.length > 0) {
+          this.events = data
+        }
+      }
+    },
+    formatDate(dateData) {
+      let date =
+        new Date(JSON.parse(dateData));
+      return date.toLocaleDateString("en-US");
+    }
+  },
+  async mounted() {
+    await this.getEvents();
+  }
+
+}
+</script>
