@@ -37,10 +37,10 @@
             {{this.formatDate(event.created_at)}}
           </td>
           <td className="border px-8 py-4 flex space-x-2">
-            <div className="bg-blue-400 hover:bg-blue-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
+            <div @click="showDetail(event)" className="bg-blue-400 hover:bg-blue-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
               <p className="font-bold">View</p>
             </div>
-            <div className="bg-red-400 hover:bg-red-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
+            <div @click="deleteEvent(event)" className="bg-red-400 hover:bg-red-800 text-white border-2 border-white rounded-lg py-2 px-4 cursor-pointer w-fit">
               <p className="font-bold">Delete</p>
             </div>
           </td>
@@ -48,30 +48,34 @@
       </tbody>
     </table>
   </div>
-  <modal-add-event @toggleModalAdd="toggleModalAdd" v-if="showAddModal" />
+  <modal-add-event @toggleModalAdd="toggleModalAdd" @getEvents="getEvents" v-if="showAddModal" />
+  <modal-detail-event @toggleModalDetail="toggleModalDetail" :event="selectedEvent" v-if="showDetailModal" />
 </div>
 </template>
 
 <script>
 import EventRepository from "../../repositories/event_repository";
 import ModalAddEvent from "../../components/ModalAddEvent.vue";
+import ModalDetailEvent from "../../components/company/ModalDetailEvent.vue";
 
 export default {
   name: "CompanyDashboard",
   components: {
-    ModalAddEvent
+    ModalAddEvent,
+    ModalDetailEvent
   },
   data() {
     return {
       events: [],
+      selectedEvent: null,
       auth: this.$store.state.user,
-      showAddModal: false
+      showAddModal: false,
+      showDetailModal: false
     }
   },
   methods: {
     async getEvents() {
       const res = await EventRepository.fetchEvents();
-      // console.log(res);
       if (res.data) {
         let ev = res.data;
         let data = [];
@@ -80,7 +84,6 @@ export default {
             data.push(event);
           }
         });
-        console.log(data, "data");
         if (data.length > 0) {
           this.events = data
         }
@@ -92,7 +95,23 @@ export default {
     },
     toggleModalAdd() {
       this.showAddModal = !this.showAddModal
+    },
+    toggleModalDetail() {
+      this.showDetailModal = !this.showDetailModal
+    },
+    showDetail(ev) {
+      this.selectedEvent = ev;
+      console.log(this.selectedEvent, 'ev');
+      this.toggleModalDetail();
+    },
+    async deleteEvent(ev) {
+      let submittedData = {
+        id: ev._id,
+      };
+      const res = await EventRepository.deleteEvent(submittedData);
+      await this.getEvents();
     }
+
   },
   async mounted() {
     await this.getEvents();

@@ -13,7 +13,7 @@
         <div className="mb-4">
           <p className="mb-2">Company Name</p>
           <div className="w-full bg-neutral-50 py-4 px-8 border-2 border-neutral-300 items-center rounded-lg flex space-x-4">
-            <input type="text" className="text-black placeholder-gray-300 text-base leading-6 flex-1 bg-neutral-50 border-none focus:outline-none" disabled />
+            <input type="text" :value="this.$store.state.user.name" className="text-black placeholder-gray-300 text-base leading-6 flex-1 bg-neutral-50 border-none focus:outline-none" disabled />
           </div>
         </div>
         <div className="mb-4">
@@ -67,6 +67,7 @@
 
 <script>
 import UserRepository from "../repositories/user_repository";
+import EventRepository from "../repositories/event_repository";
 
 export default {
   name: "ModalAddEvent",
@@ -88,7 +89,7 @@ export default {
       this.$emit('toggleModalAdd')
     },
     async getVendors() {
-      const res = await UserRepository.fetchVendor();
+      let res = await UserRepository.fetchVendor();
       if (res.data) {
         if (res.data.length > 0) {
           this.vendors = res.data;
@@ -99,8 +100,23 @@ export default {
     handleChangeVendor(e) {
       this.vendor = JSON.parse(e.target.value)
     },
-    submitData(){
-
+    async submitData() {
+      let submittedData = {
+        company_id: this.$store.state.user.id,
+        vendor_id: this.vendor._id,
+        vendor_name: this.vendor.name,
+        event_name: this.eventName,
+        proposed_date_1: JSON.stringify(this.date1),
+        proposed_date_2: JSON.stringify(this.date2),
+        proposed_date_3: JSON.stringify(this.date3),
+        confirm_date: null,
+        status: "active",
+        created_at: JSON.stringify(new Date()),
+        location: this.location,
+      };
+      let res = await EventRepository.createEvent(submittedData);
+      this.toggleModal();
+      this.$emit("getEvents");
     }
   },
   async mounted() {
