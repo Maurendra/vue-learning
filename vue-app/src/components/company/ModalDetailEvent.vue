@@ -58,11 +58,5 @@ export default {
       this.$emit('toggleModalDetail')
     },
   },
-  async mounted() {
-    console.log(this.event, 'lali');
-  },
-  updated() {
-    console.log(this.event, 'lala');
-  }
 }
 </script>
