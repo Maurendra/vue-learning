@@ -49,6 +49,7 @@
     </div>
     <modal-detail-event
       @toggleModalDetail="toggleModalDetail"
+      @getEvents="getEvents"
       :event="selectedEvent"
       v-if="showDetailModal"
     />
@@ -74,7 +75,6 @@ export default {
   methods: {
     async getEvents() {
       const res = await EventRepository.fetchEvents();
-      console.log(res);
       if (res.data) {
         let ev = res.data;
         let data = [];
